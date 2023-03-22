@@ -2,6 +2,7 @@ package com.petersen.bootcampasj.proyectospringprueba.controllers;
 
 import com.petersen.bootcampasj.proyectospringprueba.DTO.clientes.ClienteDTOcreate;
 import com.petersen.bootcampasj.proyectospringprueba.DTO.clientes.ClienteDTOupdt;
+import com.petersen.bootcampasj.proyectospringprueba.DTO.clientes.ClienteSoloDTO;
 import com.petersen.bootcampasj.proyectospringprueba.DTO.mappers.ClienteMapper;
 import com.petersen.bootcampasj.proyectospringprueba.HttpErrorResponseBody;
 import com.petersen.bootcampasj.proyectospringprueba.customExceptions.HttpClientErrorExceptionWithData;
@@ -39,6 +40,29 @@ public class ClienteController {
     public ResponseEntity getAll(){
         try{
             List<Cliente> muebles = serviceCliente.getAll();
+            return new ResponseEntity(muebles, HttpStatus.OK);
+        }
+        catch (HttpClientErrorExceptionWithData err) {
+            System.out.println(err.getMessage());
+            err.printStackTrace();
+
+            HttpErrorResponseBody errorBody = new HttpErrorResponseBody(err.getMessage(), err.getData());
+            return new ResponseEntity(errorBody, err.getStatusCode());
+        }
+        catch (Exception err) {
+            System.out.println(err.getMessage());
+            err.printStackTrace();
+
+            HttpErrorResponseBody errorBody = new HttpErrorResponseBody(err.getMessage(), null);
+            return new ResponseEntity(errorBody, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity getList(){
+        try{
+            List<Cliente> muebles = serviceCliente.getAll();
+            List<ClienteSoloDTO> mueblesDto = mapperCliente.listEntityToClienteSoloDto(muebles);
             return new ResponseEntity(muebles, HttpStatus.OK);
         }
         catch (HttpClientErrorExceptionWithData err) {
