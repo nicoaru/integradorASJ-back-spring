@@ -24,4 +24,5 @@ public class SessionController {
     public ResponseEntity login(@RequestBody Usuario credenciales) {
         return serviceSession.login(credenciales);
     }
+
 }
