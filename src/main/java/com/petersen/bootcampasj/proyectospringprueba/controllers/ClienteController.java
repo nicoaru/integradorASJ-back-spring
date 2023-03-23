@@ -2,19 +2,16 @@ package com.petersen.bootcampasj.proyectospringprueba.controllers;
 
 import com.petersen.bootcampasj.proyectospringprueba.DTO.clientes.ClienteDTOcreate;
 import com.petersen.bootcampasj.proyectospringprueba.DTO.clientes.ClienteDTOupdt;
-import com.petersen.bootcampasj.proyectospringprueba.DTO.clientes.ClienteSoloDTO;
+import com.petersen.bootcampasj.proyectospringprueba.DTO.clientes.ClienteListDTO;
 import com.petersen.bootcampasj.proyectospringprueba.DTO.mappers.ClienteMapper;
 import com.petersen.bootcampasj.proyectospringprueba.HttpErrorResponseBody;
 import com.petersen.bootcampasj.proyectospringprueba.customExceptions.HttpClientErrorExceptionWithData;
-import com.petersen.bootcampasj.proyectospringprueba.customExceptions.ValidationException;
 import com.petersen.bootcampasj.proyectospringprueba.model.domino.Cliente;
 import com.petersen.bootcampasj.proyectospringprueba.service.interfaces.ClienteServiceInterface;
-import jdk.swing.interop.SwingInterOpUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 
 @CrossOrigin(origins = "*")
@@ -62,7 +59,7 @@ public class ClienteController {
     public ResponseEntity getList(){
         try{
             List<Cliente> muebles = serviceCliente.getAll();
-            List<ClienteSoloDTO> mueblesDto = mapperCliente.listEntityToClienteSoloDto(muebles);
+            List<ClienteListDTO> mueblesDto = mapperCliente.listEntityToClienteListDto(muebles);
             return new ResponseEntity(muebles, HttpStatus.OK);
         }
         catch (HttpClientErrorExceptionWithData err) {

@@ -2,7 +2,7 @@ package com.petersen.bootcampasj.proyectospringprueba.DTO.mappers;
 
 import com.petersen.bootcampasj.proyectospringprueba.DTO.clientes.ClienteDTOcreate;
 import com.petersen.bootcampasj.proyectospringprueba.DTO.clientes.ClienteDTOupdt;
-import com.petersen.bootcampasj.proyectospringprueba.DTO.clientes.ClienteSoloDTO;
+import com.petersen.bootcampasj.proyectospringprueba.DTO.clientes.ClienteListDTO;
 import com.petersen.bootcampasj.proyectospringprueba.model.domino.Cliente;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -29,8 +29,8 @@ public interface ClienteMapper {
     @Mapping(source = "tipoCliente", target = "tipoCliente")
     Cliente dtoCreateToEntity(ClienteDTOcreate dto);
 
-    //** DTOsoloCliente **//
-    ClienteSoloDTO entityToClienteSoloDto(Cliente entity);
-    List<ClienteSoloDTO> listEntityToClienteSoloDto(List<Cliente> entity);
+    //** DTOClienteList **//
+    ClienteListDTO entityToClienteListDto(Cliente entity);
+    List<ClienteListDTO> listEntityToClienteListDto(List<Cliente> entity);
 
 }
