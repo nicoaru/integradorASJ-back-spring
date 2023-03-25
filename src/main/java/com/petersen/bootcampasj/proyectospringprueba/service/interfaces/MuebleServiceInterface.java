@@ -19,6 +19,6 @@ public interface MuebleServiceInterface {
     /**/
     boolean existsById(Integer id) throws Exception;
     HashMap<String, Object> chequearDatos(Mueble mueble) throws ValidationException;
-    EntidadesHijasMueble traerEntidadesHijas(Mueble mueble) throws Exception;
+    EntidadesHijasMueble traerEntidadesHijas(Mueble mueble);
 
 }

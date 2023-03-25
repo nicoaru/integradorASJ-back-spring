@@ -6,6 +6,7 @@ import com.petersen.bootcampasj.proyectospringprueba.customExceptions.Validation
 import com.petersen.bootcampasj.proyectospringprueba.model.domino.*;
 import com.petersen.bootcampasj.proyectospringprueba.model.repository.ClienteJPARepository;
 import com.petersen.bootcampasj.proyectospringprueba.model.repository.PedidoJPARepository;
+import com.petersen.bootcampasj.proyectospringprueba.service.clasesAuxiliares.EntidadesHijasMueble;
 import com.petersen.bootcampasj.proyectospringprueba.service.clasesAuxiliares.EntidadesHijasPedido;
 import com.petersen.bootcampasj.proyectospringprueba.service.interfaces.MuebleServiceInterface;
 import com.petersen.bootcampasj.proyectospringprueba.service.interfaces.PedidoServiceInterface;
@@ -13,6 +14,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -61,11 +64,19 @@ public class PedidoService implements PedidoServiceInterface {
         try {
             chequearDatos(newPedido);
             chequearDatosDeMueblesACrear(newPedido.getMuebles());
-            // Busco en BD las entidades hijas por ID
+            // Busco en BD las entidades hijas
             EntidadesHijasPedido entidadesHijas = traerEntidadesHijas(newPedido);
-
+            // Busco en BD las entidades hijas de los muebles a crear
+            List<EntidadesHijasMueble> entidadesHijasMuebles = traerEntidadesHijasMuebles(newPedido.getMuebles());
             // Armo la entidad que voy a persistir y la mando a la DB
             newPedido.setCliente(entidadesHijas.getCliente());
+            final int[] ix = {0};
+            newPedido.getMuebles().forEach(mueble -> {
+                mueble.setModelo(entidadesHijasMuebles.get(ix[0]).getModelo());
+                mueble.setColor(entidadesHijasMuebles.get(ix[0]).getColor());
+                mueble.setEstado(entidadesHijasMuebles.get(ix[0]).getEstado());
+                ix[0] += 1;
+            });
 
 
             Pedido pedido = repository.save(newPedido);
@@ -156,6 +167,7 @@ public class PedidoService implements PedidoServiceInterface {
         return valores;
     }
 
+
     public HashMap<String, Object> chequearDatosDeMueblesACrear(List<Mueble> muebles) throws ValidationException {
         HashMap<String, Object> validaciones = new HashMap<String, Object>();
         if(muebles == null) return validaciones;
@@ -182,6 +194,18 @@ public class PedidoService implements PedidoServiceInterface {
         return validaciones;
     }
 
+    public List<EntidadesHijasMueble> traerEntidadesHijasMuebles(List<Mueble> muebles) throws Exception {
+        List<EntidadesHijasMueble> resultado = new ArrayList<EntidadesHijasMueble>();
+        if(muebles == null) return resultado;
+
+        muebles.forEach(mueble -> {
+            EntidadesHijasMueble entidadesHijasMueble = serviceMueble.traerEntidadesHijas(mueble);
+            resultado.add(entidadesHijasMueble);
+
+        });
+
+        return resultado;
+    }
 
 }
 

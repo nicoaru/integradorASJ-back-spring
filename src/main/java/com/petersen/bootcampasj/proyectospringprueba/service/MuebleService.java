@@ -167,8 +167,9 @@ public class MuebleService implements MuebleServiceInterface {
         return validaciones;
     }
 
-    public EntidadesHijasMueble traerEntidadesHijas(Mueble mueble) throws Exception {
+    public EntidadesHijasMueble traerEntidadesHijas(Mueble mueble) {
         EntidadesHijasMueble valores = new EntidadesHijasMueble();
+
         if(mueble.getPedido() == null || mueble.getPedido().getId() == null) valores.setPedido(null);
         else {
             Pedido _pedido = repositoryPedido.findById(mueble.getPedido().getId())
