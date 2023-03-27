@@ -1,6 +1,7 @@
 package com.petersen.bootcampasj.proyectospringprueba.service;
 
-import com.petersen.bootcampasj.proyectospringprueba.HttpErrorResponseBody;
+import com.petersen.bootcampasj.proyectospringprueba.exceptions.HttpClientErrorExceptionWithData;
+import com.petersen.bootcampasj.proyectospringprueba.otros.HttpErrorResponseBody;
 import com.petersen.bootcampasj.proyectospringprueba.model.domino.Color;
 import com.petersen.bootcampasj.proyectospringprueba.model.repository.ColorJPARepository;
 import com.petersen.bootcampasj.proyectospringprueba.service.interfaces.ColorServiceInterface;
@@ -25,107 +26,23 @@ public class ColorService implements ColorServiceInterface {
     /** Métodos **/
     /** Métodos **/
 
-    public ResponseEntity getAll() {
-        try {
-            List<Color> colors = (List<Color>) repository.findAll();
-            return new ResponseEntity(colors, HttpStatus.OK);
-        }
-        catch (Exception err) {
-            System.out.println(err.getMessage());
-            err.printStackTrace();
-
-            HttpErrorResponseBody errorBody = new HttpErrorResponseBody(err.getMessage(), null);
-            return new ResponseEntity(errorBody, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public List<Color> getAll() {
+        List<Color> colors = (List<Color>) repository.findAll();
+        return colors;
     }
 
     @Override
-    public ResponseEntity getById(Integer id) {
-        try {
-            Color color = repository.findById(id)
-                                .orElse(null);
-            if(color != null){
-                return new ResponseEntity(color, HttpStatus.OK);
-            }
-            else {
-                HttpErrorResponseBody errorBody = new HttpErrorResponseBody("Color no encontrado", null);
-                return new ResponseEntity(errorBody, HttpStatus.NOT_FOUND);
-            }
+    public Color getById(Integer id) throws HttpClientErrorExceptionWithData {
+        Color color = repository.findById(id)
+                            .orElse(null);
+        if(color != null){
+            return color;
         }
-        catch (Exception err) {
-            System.out.println(err.getMessage());
-            err.printStackTrace();
-
-            HttpErrorResponseBody errorBody = new HttpErrorResponseBody(err.getMessage(), null);
-            return new ResponseEntity(errorBody, HttpStatus.INTERNAL_SERVER_ERROR);
+        else {
+            String errorMessage = "Not found";
+            throw new HttpClientErrorExceptionWithData(errorMessage, HttpStatus.NOT_FOUND, "Not found", null);
         }
     }
 
-    @Override
-    public ResponseEntity create(Color newColor) {
-        System.out.println("Entro en colorService.create");
-        try {
-            Color color = repository.save(newColor);
-            return new ResponseEntity(color, HttpStatus.CREATED);
-        }
-        catch (Exception err) {
-            System.out.println(err.getMessage());
-            err.printStackTrace();
-
-            HttpErrorResponseBody errorBody = new HttpErrorResponseBody(err.getMessage(), null);
-            return new ResponseEntity(errorBody, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @Override
-    public ResponseEntity updateById(Integer id, Color updatedColor) {
-        try {
-            Color color = repository.findById(id)
-                                .orElse(null);
-
-            if(color != null) {
-                updatedColor.setId(id);
-
-                Color newColor = repository.save(updatedColor);
-                return new ResponseEntity(newColor, HttpStatus.OK);
-            }
-            else {
-                HttpErrorResponseBody errorBody = new HttpErrorResponseBody(String.format("No existe Color con id %s", id), null);
-                return new ResponseEntity(errorBody, HttpStatus.NOT_FOUND);
-            }
-        }
-        catch (Exception err) {
-            System.out.println(err.getMessage());
-            err.printStackTrace();
-
-            HttpErrorResponseBody errorBody = new HttpErrorResponseBody(true, err.getMessage(), null);
-            return new ResponseEntity(errorBody, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-    }
-
-    @Override
-    public ResponseEntity deleteById(Integer id) {
-        try {
-            Color color = repository.findById(id)
-                                    .orElse(null);
-
-            if(color != null) {
-                repository.deleteById(id);
-                return new ResponseEntity(color, HttpStatus.OK);
-            }
-            else {
-                HttpErrorResponseBody errorBody = new HttpErrorResponseBody(String.format("No existe Color con id %s", id), null);
-                return new ResponseEntity(errorBody, HttpStatus.NOT_FOUND);
-            }
-        }
-        catch (Exception err) {
-            System.out.println(err.getMessage());
-            err.printStackTrace();
-
-            HttpErrorResponseBody errorBody = new HttpErrorResponseBody(true, err.getMessage(), null);
-            return new ResponseEntity(errorBody, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 
 }

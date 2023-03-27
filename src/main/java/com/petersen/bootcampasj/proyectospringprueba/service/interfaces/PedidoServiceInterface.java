@@ -1,6 +1,6 @@
 package com.petersen.bootcampasj.proyectospringprueba.service.interfaces;
 
-import com.petersen.bootcampasj.proyectospringprueba.customExceptions.ValidationException;
+import com.petersen.bootcampasj.proyectospringprueba.exceptions.ValidationException;
 import com.petersen.bootcampasj.proyectospringprueba.model.domino.Mueble;
 import com.petersen.bootcampasj.proyectospringprueba.model.domino.Pedido;
 import com.petersen.bootcampasj.proyectospringprueba.service.clasesAuxiliares.EntidadesHijasPedido;

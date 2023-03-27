@@ -1,9 +1,8 @@
 package com.petersen.bootcampasj.proyectospringprueba.service;
 
 import com.petersen.bootcampasj.proyectospringprueba.DTO.mappers.ClienteMapper;
-import com.petersen.bootcampasj.proyectospringprueba.HttpErrorResponseBody;
-import com.petersen.bootcampasj.proyectospringprueba.customExceptions.HttpClientErrorExceptionWithData;
-import com.petersen.bootcampasj.proyectospringprueba.customExceptions.ValidationException;
+import com.petersen.bootcampasj.proyectospringprueba.exceptions.HttpClientErrorExceptionWithData;
+import com.petersen.bootcampasj.proyectospringprueba.exceptions.ValidationException;
 import com.petersen.bootcampasj.proyectospringprueba.model.domino.*;
 import com.petersen.bootcampasj.proyectospringprueba.model.repository.ClienteJPARepository;
 import com.petersen.bootcampasj.proyectospringprueba.model.repository.MuebleJPARepository;
@@ -13,9 +12,7 @@ import com.petersen.bootcampasj.proyectospringprueba.service.clasesAuxiliares.En
 import com.petersen.bootcampasj.proyectospringprueba.service.interfaces.ClienteServiceInterface;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.HashMap;
 import java.util.List;

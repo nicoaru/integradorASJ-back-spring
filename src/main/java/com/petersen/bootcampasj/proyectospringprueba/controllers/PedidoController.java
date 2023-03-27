@@ -4,21 +4,22 @@ import com.petersen.bootcampasj.proyectospringprueba.DTO.pedidos.pedidoCreateDTO
 import com.petersen.bootcampasj.proyectospringprueba.DTO.pedidos.pedidoResponseDTO.PedidoResponseDTO;
 import com.petersen.bootcampasj.proyectospringprueba.DTO.pedidos.PedidoDTOupdt;
 import com.petersen.bootcampasj.proyectospringprueba.DTO.mappers.PedidoMapper;
-import com.petersen.bootcampasj.proyectospringprueba.HttpErrorResponseBody;
-import com.petersen.bootcampasj.proyectospringprueba.customExceptions.HttpClientErrorExceptionWithData;
-import com.petersen.bootcampasj.proyectospringprueba.customExceptions.ValidationException;
+import com.petersen.bootcampasj.proyectospringprueba.otros.HttpErrorResponseBody;
+import com.petersen.bootcampasj.proyectospringprueba.exceptions.HttpClientErrorExceptionWithData;
 import com.petersen.bootcampasj.proyectospringprueba.model.domino.Pedido;
 import com.petersen.bootcampasj.proyectospringprueba.service.interfaces.PedidoServiceInterface;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/pedidos")
+@Api(value = "controller pedidos", tags = "Pedidos")
 public class PedidoController {
     private final PedidoServiceInterface servicePedido;
     private final PedidoMapper mapperPedido;
@@ -36,6 +37,7 @@ public class PedidoController {
     /** Endpoints **/
 
     @GetMapping
+    @ApiOperation(value = "Traer todos los Pedidos")
     public ResponseEntity getAll(){
         try{
             List<Pedido> pedidos = servicePedido.getAll();
@@ -59,6 +61,7 @@ public class PedidoController {
     }
 
     @GetMapping("/{id}")
+    @ApiOperation(value = "Buscar por id")
     public ResponseEntity getById(@PathVariable Integer id){
         System.out.println("Entró en GET /pedidos/{id} - getById");
         try {
@@ -85,6 +88,7 @@ public class PedidoController {
     }
 
     @PostMapping
+    @ApiOperation(value = "Crear nuevo Pedido")
     public ResponseEntity create(@RequestBody PedidoCreateDTO newPedido){
         System.out.println("Entró en POST /pedidos/{id} - updateById");
         try{
@@ -112,6 +116,7 @@ public class PedidoController {
     }
 
     @PutMapping("/{id}")
+    @ApiOperation(value = "Actualizar datos de un Pedido por id")
     public ResponseEntity updateById(@PathVariable Integer id, @RequestBody PedidoDTOupdt updatedPedido){
         System.out.println("Entró en PUT /pedidos/{id} - updateById");
         try{
@@ -140,6 +145,7 @@ public class PedidoController {
     }
 
     @DeleteMapping("/{id}")
+    @ApiOperation(value = "Eliminar un Pedido por id")
     public ResponseEntity deleteById(@PathVariable Integer id){
         try{
             Pedido pedidoEliminado = servicePedido.deleteById(id);
@@ -162,58 +168,4 @@ public class PedidoController {
         }
     }
 
-
 }
-
-/*
-    @GetMapping
-    public ResponseEntity getAll(){
-
-        return servicePedido.getAll();
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity getById(@PathVariable Integer id){
-        System.out.println("Entró en /pedidos/{id} - getById");
-
-        return servicePedido.getById(id);
-    }
-
-    @PostMapping
-    public ResponseEntity create(@Valid @RequestBody PedidoDTOcreate newPedido, BindingResult validationResult){
-
-        if(validationResult.hasErrors()){
-            Map<String, String> validaciones = new HashMap<>();
-            validationResult.getFieldErrors().forEach(fieldError -> {
-                validaciones.put(fieldError.getField(), fieldError.getDefaultMessage());
-            });
-            HttpErrorResponseBody errorBody = new HttpErrorResponseBody("Datos inválidos", validaciones);
-            return new ResponseEntity(errorBody, HttpStatus.BAD_REQUEST);
-        }
-
-        return servicePedido.create(newPedido);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity deleteById(@PathVariable Integer id){
-
-        return servicePedido.deleteById(id);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity updateById(@PathVariable Integer id, @Valid @RequestBody PedidoDTOupdt updatedPedido, BindingResult validationResult){
-        System.out.println("Entró en PUT /pedidos/{id} - updateById");
-
-        if(validationResult.hasErrors()){
-            Map<String, String> validaciones = new HashMap<>();
-            validationResult.getFieldErrors().forEach(fieldError -> {
-                validaciones.put(fieldError.getField(), fieldError.getDefaultMessage());
-            });
-            HttpErrorResponseBody errorBody = new HttpErrorResponseBody("Datos inválidos", validaciones);
-            return new ResponseEntity(errorBody, HttpStatus.BAD_REQUEST);
-        }
-
-        return servicePedido.updateById(id, updatedPedido);
-    }
-
-*/

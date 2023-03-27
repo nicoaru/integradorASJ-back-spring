@@ -1,6 +1,8 @@
 package com.petersen.bootcampasj.proyectospringprueba.service;
 
-import com.petersen.bootcampasj.proyectospringprueba.HttpErrorResponseBody;
+import com.petersen.bootcampasj.proyectospringprueba.exceptions.HttpClientErrorExceptionWithData;
+import com.petersen.bootcampasj.proyectospringprueba.model.domino.Modelo;
+import com.petersen.bootcampasj.proyectospringprueba.otros.HttpErrorResponseBody;
 import com.petersen.bootcampasj.proyectospringprueba.model.domino.Modelo;
 import com.petersen.bootcampasj.proyectospringprueba.model.repository.ModeloJPARepository;
 import com.petersen.bootcampasj.proyectospringprueba.service.interfaces.ModeloServiceInterface;
@@ -25,106 +27,21 @@ public class ModeloService implements ModeloServiceInterface {
     /** Métodos **/
     /** Métodos **/
 
-    public ResponseEntity getAll() {
-        try {
-            List<Modelo> modelos = (List<Modelo>) repository.findAll();
-            return new ResponseEntity(modelos, HttpStatus.OK);
-        }
-        catch (Exception err) {
-            System.out.println(err.getMessage());
-            err.printStackTrace();
-
-            HttpErrorResponseBody errorBody = new HttpErrorResponseBody(err.getMessage(), null);
-            return new ResponseEntity(errorBody, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public List<Modelo> getAll() {
+        List<Modelo> modelos = (List<Modelo>) repository.findAll();
+        return modelos;
     }
 
     @Override
-    public ResponseEntity getById(Integer id) {
-        try {
-            Modelo modelo = repository.findById(id)
-                                .orElse(null);
-            if(modelo != null){
-                return new ResponseEntity(modelo, HttpStatus.OK);
-            }
-            else {
-                HttpErrorResponseBody errorBody = new HttpErrorResponseBody("Modelo no encontrado", null);
-                return new ResponseEntity(errorBody, HttpStatus.NOT_FOUND);
-            }
+    public Modelo getById(Integer id) throws HttpClientErrorExceptionWithData {
+        Modelo modelo = repository.findById(id)
+                .orElse(null);
+        if(modelo != null){
+            return modelo;
         }
-        catch (Exception err) {
-            System.out.println(err.getMessage());
-            err.printStackTrace();
-
-            HttpErrorResponseBody errorBody = new HttpErrorResponseBody(err.getMessage(), null);
-            return new ResponseEntity(errorBody, HttpStatus.INTERNAL_SERVER_ERROR);
+        else {
+            String errorMessage = "Not found";
+            throw new HttpClientErrorExceptionWithData(errorMessage, HttpStatus.NOT_FOUND, "Not found", null);
         }
     }
-
-    @Override
-    public ResponseEntity create(Modelo newModelo) {
-        try {
-            Modelo modelo = repository.save(newModelo);
-            return new ResponseEntity(modelo, HttpStatus.CREATED);
-        }
-        catch (Exception err) {
-            System.out.println(err.getMessage());
-            err.printStackTrace();
-
-            HttpErrorResponseBody errorBody = new HttpErrorResponseBody(err.getMessage(), null);
-            return new ResponseEntity(errorBody, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @Override
-    public ResponseEntity updateById(Integer id, Modelo updatedModelo) {
-        try {
-            Modelo modelo = repository.findById(id)
-                                .orElse(null);
-
-            if(modelo != null) {
-                updatedModelo.setId(id);
-
-                Modelo newModelo = repository.save(updatedModelo);
-                return new ResponseEntity(newModelo, HttpStatus.OK);
-            }
-            else {
-                HttpErrorResponseBody errorBody = new HttpErrorResponseBody(String.format("No existe Modelo con id %s", id), null);
-                return new ResponseEntity(errorBody, HttpStatus.NOT_FOUND);
-            }
-        }
-        catch (Exception err) {
-            System.out.println(err.getMessage());
-            err.printStackTrace();
-
-            HttpErrorResponseBody errorBody = new HttpErrorResponseBody(true, err.getMessage(), null);
-            return new ResponseEntity(errorBody, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-    }
-
-    @Override
-    public ResponseEntity deleteById(Integer id) {
-        try {
-            Modelo modelo = repository.findById(id)
-                                    .orElse(null);
-
-            if(modelo != null) {
-                repository.deleteById(id);
-                return new ResponseEntity(modelo, HttpStatus.OK);
-            }
-            else {
-                HttpErrorResponseBody errorBody = new HttpErrorResponseBody(String.format("No existe Modelo con id %s", id), null);
-                return new ResponseEntity(errorBody, HttpStatus.NOT_FOUND);
-            }
-        }
-        catch (Exception err) {
-            System.out.println(err.getMessage());
-            err.printStackTrace();
-
-            HttpErrorResponseBody errorBody = new HttpErrorResponseBody(true, err.getMessage(), null);
-            return new ResponseEntity(errorBody, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
 }

@@ -1,16 +1,22 @@
 package com.petersen.bootcampasj.proyectospringprueba.controllers;
 
-import com.petersen.bootcampasj.proyectospringprueba.HttpErrorResponseBody;
+import com.petersen.bootcampasj.proyectospringprueba.exceptions.HttpClientErrorExceptionWithData;
 import com.petersen.bootcampasj.proyectospringprueba.model.domino.Color;
+import com.petersen.bootcampasj.proyectospringprueba.otros.HttpErrorResponseBody;
 import com.petersen.bootcampasj.proyectospringprueba.service.interfaces.ColorServiceInterface;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/colores")
+@Api(value = "controller colores", tags = "Colores")
 public class ColorController {
     private final ColorServiceInterface serviceColor;
 
@@ -24,40 +30,54 @@ public class ColorController {
     /** Endpoints **/
 
     @GetMapping
+    @ApiOperation(value = "Traer todos los Colores")
     public ResponseEntity getAll(){
+        try {
+            List<Color> colores = serviceColor.getAll();
+            return new ResponseEntity(colores, HttpStatus.OK);
+        }
+        catch (HttpClientErrorExceptionWithData err) {
+            System.out.println(err.getMessage());
+            err.printStackTrace();
 
-        return serviceColor.getAll();
+            HttpErrorResponseBody errorBody = new HttpErrorResponseBody(err.getMessage(), err.getData());
+            return new ResponseEntity(errorBody, err.getStatusCode());
+        }
+        catch (Exception err) {
+            System.out.println(err.getMessage());
+            err.printStackTrace();
+
+            HttpErrorResponseBody errorBody = new HttpErrorResponseBody(err.getMessage(), null);
+            return new ResponseEntity(errorBody, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     @GetMapping("/{id}")
+    @ApiOperation(value = "Buscar por id")
     public ResponseEntity getById(@PathVariable Integer id){
         System.out.println("Entró en /clientes/{id} - getById");
+        try {
+            Color color = serviceColor.getById(id);
+            return new ResponseEntity(color, HttpStatus.OK);
+        }
+        catch (HttpClientErrorExceptionWithData err) {
+            System.out.println(err.getMessage());
+            err.printStackTrace();
 
-        return serviceColor.getById(id);
-    }
+            HttpErrorResponseBody errorBody = new HttpErrorResponseBody(err.getMessage(), err.getData());
+            return new ResponseEntity(errorBody, err.getStatusCode());
+        }
+        catch (Exception err) {
+            System.out.println(err.getMessage());
+            err.printStackTrace();
 
-    @PostMapping
-    public ResponseEntity create(@RequestBody Color newColor){
-
-        return serviceColor.create(newColor);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity deleteById(@PathVariable Integer id){
-
-        return serviceColor.deleteById(id);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity updateById(@PathVariable Integer id, @RequestBody com.petersen.bootcampasj.proyectospringprueba.model.domino.Color updatedColor){
-        System.out.println("Entró en PUT /usuarios/{id} - updateById");
-
-        if(updatedColor.getNombre() == null) {
-            HttpErrorResponseBody errorBody = new HttpErrorResponseBody("El nombre no puede ser nulo", null);
-            return new ResponseEntity(errorBody, HttpStatus.BAD_REQUEST);
+            HttpErrorResponseBody errorBody = new HttpErrorResponseBody(err.getMessage(), null);
+            return new ResponseEntity(errorBody, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        else return serviceColor.updateById(id, updatedColor);
     }
+
+
 
 }

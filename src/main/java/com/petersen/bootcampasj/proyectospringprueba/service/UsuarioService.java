@@ -1,6 +1,7 @@
 package com.petersen.bootcampasj.proyectospringprueba.service;
 
-import com.petersen.bootcampasj.proyectospringprueba.HttpErrorResponseBody;
+import com.petersen.bootcampasj.proyectospringprueba.exceptions.HttpClientErrorExceptionWithData;
+import com.petersen.bootcampasj.proyectospringprueba.otros.HttpErrorResponseBody;
 import com.petersen.bootcampasj.proyectospringprueba.model.domino.Usuario;
 import com.petersen.bootcampasj.proyectospringprueba.model.repository.UsuarioJPARepository;
 import com.petersen.bootcampasj.proyectospringprueba.service.interfaces.UsuarioServiceInterface;
@@ -25,139 +26,35 @@ public class UsuarioService implements UsuarioServiceInterface {
     /** Métodos **/
     /** Métodos **/
 
-    public ResponseEntity getAll() {
-        try {
-            List<Usuario> usuarios = (List<Usuario>) repository.findAll();
-            return new ResponseEntity(usuarios, HttpStatus.OK);
-        }
-        catch (Exception err) {
-            System.out.println(err.getMessage());
-            err.printStackTrace();
-
-            HttpErrorResponseBody errorBody = new HttpErrorResponseBody(err.getMessage(), null);
-            return new ResponseEntity(errorBody, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public List<Usuario> getAll() {
+        List<Usuario> usuarios = (List<Usuario>) repository.findAll();
+        return usuarios;
     }
 
     @Override
-    public ResponseEntity getById(Integer id) {
-        try {
-            Usuario usuario = repository.findById(id)
-                                .orElse(null);
-            if(usuario != null){
-                return new ResponseEntity(usuario, HttpStatus.OK);
-            }
-            else {
-                HttpErrorResponseBody errorBody = new HttpErrorResponseBody("Usuario no encontrado", null);
-                return new ResponseEntity(errorBody, HttpStatus.NOT_FOUND);
-            }
+    public Usuario getById(Integer id) {
+        Usuario usuario = repository.findById(id)
+                            .orElse(null);
+        if(usuario != null){
+            return usuario;
         }
-        catch (Exception err) {
-            System.out.println(err.getMessage());
-            err.printStackTrace();
-
-            HttpErrorResponseBody errorBody = new HttpErrorResponseBody(err.getMessage(), null);
-            return new ResponseEntity(errorBody, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @Override
-    public ResponseEntity getByUsername(String username) {
-        try {
-            Usuario usuario = repository.findByUsername(username)
-                    .orElse(null);
-            if(usuario != null){
-                return new ResponseEntity(usuario, HttpStatus.OK);
-            }
-            else {
-                HttpErrorResponseBody errorBody = new HttpErrorResponseBody("Usuario no encontrado", null);
-                return new ResponseEntity(errorBody, HttpStatus.NOT_FOUND);
-            }
-        }
-        catch (Exception err) {
-            System.out.println(err.getMessage());
-            err.printStackTrace();
-
-            HttpErrorResponseBody errorBody = new HttpErrorResponseBody(err.getMessage(), null);
-            return new ResponseEntity(errorBody, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @Override
-    public ResponseEntity create(Usuario newUser) {
-        try {
-           boolean yaExisteUsername = repository.existsByUsername(newUser.getUsername());
-
-            if (!yaExisteUsername) {
-                Usuario usuario = repository.save(newUser);
-                return new ResponseEntity(usuario, HttpStatus.CREATED);
-            }
-            else {
-                HttpErrorResponseBody errorBody = new HttpErrorResponseBody("El nombre de usuario ya existe", null);
-                return new ResponseEntity(errorBody, HttpStatus.CONFLICT);
-            }
-        }
-        catch (Exception err) {
-            System.out.println(err.getMessage());
-            err.printStackTrace();
-
-            HttpErrorResponseBody errorBody = new HttpErrorResponseBody(err.getMessage(), null);
-            return new ResponseEntity(errorBody, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @Override
-    public ResponseEntity updateById(Integer id, Usuario updatedUser) {
-        try {
-            Usuario usuario = repository.findById(id)
-                                .orElse(null);
-
-            if(usuario != null) {
-                updatedUser.setId(id);
-/*
-                usuario.setUsername(updatedUser.getUsername());
-                usuario.setPassword(updatedUser.getPassword());
-*/
-
-                Usuario newUser = repository.save(updatedUser);
-                return new ResponseEntity(newUser, HttpStatus.OK);
-            }
-            else {
-                HttpErrorResponseBody errorBody = new HttpErrorResponseBody(String.format("No existe usuario con id %s", id), null);
-                return new ResponseEntity(errorBody, HttpStatus.NOT_FOUND);
-            }
-        }
-        catch (Exception err) {
-            System.out.println(err.getMessage());
-            err.printStackTrace();
-
-            HttpErrorResponseBody errorBody = new HttpErrorResponseBody(true, err.getMessage(), null);
-            return new ResponseEntity(errorBody, HttpStatus.INTERNAL_SERVER_ERROR);
+        else {
+            String errorMessage = "Not found";
+            throw new HttpClientErrorExceptionWithData(errorMessage, HttpStatus.NOT_FOUND, "Not found", null);
         }
 
     }
 
     @Override
-    public ResponseEntity deleteById(Integer id) {
-        try {
-            Usuario usuario = repository.findById(id)
-                                    .orElse(null);
-
-            if(usuario != null) {
-                repository.deleteById(id);
-                return new ResponseEntity(usuario, HttpStatus.OK);
-            }
-            else {
-                HttpErrorResponseBody errorBody = new HttpErrorResponseBody(String.format("No existe usuario con id %s", id), null);
-                return new ResponseEntity(errorBody, HttpStatus.NOT_FOUND);
-            }
+    public Usuario getByUsername(String username) throws HttpClientErrorExceptionWithData {
+        Usuario usuario = repository.findByUsername(username)
+                .orElse(null);
+        if(usuario != null){
+           return usuario;
         }
-        catch (Exception err) {
-            System.out.println(err.getMessage());
-            err.printStackTrace();
-
-            HttpErrorResponseBody errorBody = new HttpErrorResponseBody(true, err.getMessage(), null);
-            return new ResponseEntity(errorBody, HttpStatus.INTERNAL_SERVER_ERROR);
+        else {
+            String errorMessage = "Not found";
+            throw new HttpClientErrorExceptionWithData(errorMessage, HttpStatus.NOT_FOUND, "Not found", null);
         }
     }
 

@@ -4,21 +4,22 @@ import com.petersen.bootcampasj.proyectospringprueba.DTO.muebles.MuebleDTOcreate
 import com.petersen.bootcampasj.proyectospringprueba.DTO.muebles.MuebleDTOupdt;
 import com.petersen.bootcampasj.proyectospringprueba.DTO.mappers.MuebleMapper;
 import com.petersen.bootcampasj.proyectospringprueba.DTO.muebles.MuebleResponseDTO;
-import com.petersen.bootcampasj.proyectospringprueba.HttpErrorResponseBody;
-import com.petersen.bootcampasj.proyectospringprueba.customExceptions.HttpClientErrorExceptionWithData;
-import com.petersen.bootcampasj.proyectospringprueba.customExceptions.ValidationException;
+import com.petersen.bootcampasj.proyectospringprueba.otros.HttpErrorResponseBody;
+import com.petersen.bootcampasj.proyectospringprueba.exceptions.HttpClientErrorExceptionWithData;
 import com.petersen.bootcampasj.proyectospringprueba.model.domino.Mueble;
 import com.petersen.bootcampasj.proyectospringprueba.service.interfaces.MuebleServiceInterface;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/muebles")
+@Api(value = "controller muebls", tags = "Muebles")
 public class MuebleController {
     private final MuebleServiceInterface serviceMueble;
     private final MuebleMapper mapperMueble;
@@ -35,6 +36,7 @@ public class MuebleController {
     /** Endpoints **/
 
     @GetMapping
+    @ApiOperation(value = "Traer todos los Muebles")
     public ResponseEntity getAll(){
         try{
             List<Mueble> muebles = serviceMueble.getAll();
@@ -59,6 +61,7 @@ public class MuebleController {
     }
 
     @GetMapping("/{id}")
+    @ApiOperation(value = "Buscar por id")
     public ResponseEntity getById(@PathVariable Integer id){
         System.out.println("Entró en GET /muebles/{id} - getById");
         try {
@@ -86,6 +89,7 @@ public class MuebleController {
     }
 
     @PostMapping
+    @ApiOperation(value = "Crear nuevo Mueble")
     public ResponseEntity create(@RequestBody MuebleDTOcreate newMueble){
         System.out.println("Entró en CREATE /muebles/{id} - updateById");
         try{
@@ -115,6 +119,7 @@ public class MuebleController {
     }
 
     @PutMapping("/{id}")
+    @ApiOperation(value = "Actualizar datos de un Mueble por id")
     public ResponseEntity updateById(@PathVariable Integer id, @RequestBody MuebleDTOupdt updatedMueble){
         System.out.println("Entró en PUT /muebles/{id} - updateById");
         try{
@@ -144,6 +149,7 @@ public class MuebleController {
     }
 
     @DeleteMapping("/{id}")
+    @ApiOperation(value = "Eliminar un Mueble por id")
     public ResponseEntity deleteById(@PathVariable Integer id){
         try{
             Mueble muebleEliminado = serviceMueble.deleteById(id);
@@ -166,6 +172,5 @@ public class MuebleController {
             return new ResponseEntity(errorBody, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 
 }

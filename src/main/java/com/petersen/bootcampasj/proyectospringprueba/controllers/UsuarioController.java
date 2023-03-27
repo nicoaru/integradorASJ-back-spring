@@ -1,16 +1,23 @@
 package com.petersen.bootcampasj.proyectospringprueba.controllers;
 
-import com.petersen.bootcampasj.proyectospringprueba.HttpErrorResponseBody;
+import com.petersen.bootcampasj.proyectospringprueba.exceptions.HttpClientErrorExceptionWithData;
 import com.petersen.bootcampasj.proyectospringprueba.model.domino.Usuario;
+import com.petersen.bootcampasj.proyectospringprueba.otros.HttpErrorResponseBody;
 import com.petersen.bootcampasj.proyectospringprueba.service.interfaces.UsuarioServiceInterface;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/usuarios")
+@Api(value = "controller usuarios", tags = "Usuarios")
 public class UsuarioController {
     private final UsuarioServiceInterface serviceUsuario;
 
@@ -24,42 +31,57 @@ public class UsuarioController {
     /** Endpoints **/
 
     @GetMapping
+    @ApiOperation(value = "Traer todos los Usuarios, o por username si se le pasa query param")
     public ResponseEntity getAllOrByUsername(@RequestParam(required = false) String username){
-        if(username != null) return serviceUsuario.getByUsername(username);
-        else return serviceUsuario.getAll();
+        try {
+            if(username != null) {
+                Usuario usuario = serviceUsuario.getByUsername(username);
+                return new ResponseEntity<Usuario>(usuario, HttpStatus.OK);
+            }
+            else {
+                List<Usuario> usuarios = serviceUsuario.getAll();
+                return new ResponseEntity<List<Usuario>>(usuarios, HttpStatus.OK);
+            }
+        }
+        catch (HttpClientErrorExceptionWithData err) {
+            System.out.println(err.getMessage());
+            err.printStackTrace();
+
+            HttpErrorResponseBody errorBody = new HttpErrorResponseBody(err.getMessage(), err.getData());
+            return new ResponseEntity(errorBody, err.getStatusCode());
+        }
+        catch (Exception err) {
+            System.out.println(err.getMessage());
+            err.printStackTrace();
+
+            HttpErrorResponseBody errorBody = new HttpErrorResponseBody(err.getMessage(), null);
+            return new ResponseEntity(errorBody, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/{id}")
+    @ApiOperation(value = "Buscar por id")
     public ResponseEntity getById(@PathVariable Integer id){
         System.out.println("Entró en /usuarios/{id} - getById");
 
-        return serviceUsuario.getById(id);
-    }
-
-    @PostMapping
-    public ResponseEntity create(@RequestBody Usuario usuarioReq){
-
-        return serviceUsuario.create(usuarioReq);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity deleteById(@PathVariable Integer id){
-
-        return serviceUsuario.deleteById(id);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity updateById(@PathVariable Integer id, @RequestBody Usuario updatedUser){
-        System.out.println("Entró en PUT /usuarios/{id} - updateById");
-
-        if(updatedUser.getUsername() == null || updatedUser.getPassword()== null) {
-            System.out.println("Ni usuario ni contraseña pueden ser nulos");
-            HttpErrorResponseBody errorBody = new HttpErrorResponseBody("Ni usuario ni contraseña pueden ser nulos", null);
-            return new ResponseEntity(errorBody, HttpStatus.BAD_REQUEST);
+        try {
+            Usuario usuario = serviceUsuario.getById(id);
+            return new ResponseEntity<Usuario>(usuario, HttpStatus.OK);
         }
+        catch (HttpClientErrorExceptionWithData err) {
+            System.out.println(err.getMessage());
+            err.printStackTrace();
 
-        else return serviceUsuario.updateById(id, updatedUser);
+            HttpErrorResponseBody errorBody = new HttpErrorResponseBody(err.getMessage(), err.getData());
+            return new ResponseEntity(errorBody, err.getStatusCode());
+        }
+        catch (Exception err) {
+            System.out.println(err.getMessage());
+            err.printStackTrace();
+
+            HttpErrorResponseBody errorBody = new HttpErrorResponseBody(err.getMessage(), null);
+            return new ResponseEntity(errorBody, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
-
 
 }

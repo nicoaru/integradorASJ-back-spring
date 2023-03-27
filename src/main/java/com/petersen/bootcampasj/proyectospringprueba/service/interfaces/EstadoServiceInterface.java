@@ -1,13 +1,14 @@
 package com.petersen.bootcampasj.proyectospringprueba.service.interfaces;
 
+import com.petersen.bootcampasj.proyectospringprueba.exceptions.HttpClientErrorExceptionWithData;
+import com.petersen.bootcampasj.proyectospringprueba.model.domino.Color;
 import com.petersen.bootcampasj.proyectospringprueba.model.domino.Estado;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+
 public interface EstadoServiceInterface {
-    ResponseEntity getAll();
-    ResponseEntity getById(Integer id);
-    ResponseEntity create(Estado newEntity);
-    //ResponseEntity createMany(List<T> newEntitiesList);
-    ResponseEntity updateById(Integer id, Estado updatedEntity);
-    ResponseEntity deleteById(Integer id);
+    List<Estado> getAll();
+    Estado getById(Integer id) throws HttpClientErrorExceptionWithData;
+
 }

@@ -1,4 +1,4 @@
-package com.petersen.bootcampasj.proyectospringprueba.customExceptions;
+package com.petersen.bootcampasj.proyectospringprueba.exceptions;
 
 import lombok.Data;
 import org.springframework.http.HttpStatus;

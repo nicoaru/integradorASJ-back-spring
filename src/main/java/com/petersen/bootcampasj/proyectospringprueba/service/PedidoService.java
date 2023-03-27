@@ -1,8 +1,8 @@
 package com.petersen.bootcampasj.proyectospringprueba.service;
 
 import com.petersen.bootcampasj.proyectospringprueba.DTO.mappers.PedidoMapper;
-import com.petersen.bootcampasj.proyectospringprueba.customExceptions.HttpClientErrorExceptionWithData;
-import com.petersen.bootcampasj.proyectospringprueba.customExceptions.ValidationException;
+import com.petersen.bootcampasj.proyectospringprueba.exceptions.HttpClientErrorExceptionWithData;
+import com.petersen.bootcampasj.proyectospringprueba.exceptions.ValidationException;
 import com.petersen.bootcampasj.proyectospringprueba.model.domino.*;
 import com.petersen.bootcampasj.proyectospringprueba.model.repository.ClienteJPARepository;
 import com.petersen.bootcampasj.proyectospringprueba.model.repository.PedidoJPARepository;
@@ -14,7 +14,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

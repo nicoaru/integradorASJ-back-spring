@@ -1,4 +1,4 @@
-package com.petersen.bootcampasj.proyectospringprueba;
+package com.petersen.bootcampasj.proyectospringprueba.otros;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

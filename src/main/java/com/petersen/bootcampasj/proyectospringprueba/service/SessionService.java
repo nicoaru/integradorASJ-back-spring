@@ -1,32 +1,24 @@
 package com.petersen.bootcampasj.proyectospringprueba.service;
 
-import com.petersen.bootcampasj.proyectospringprueba.DTO.mappers.UsuarioMapper;
-import com.petersen.bootcampasj.proyectospringprueba.DTO.usuarios.UsuarioResponseDTO;
-import com.petersen.bootcampasj.proyectospringprueba.HttpErrorResponseBody;
-import com.petersen.bootcampasj.proyectospringprueba.customExceptions.HttpClientErrorExceptionWithData;
-import com.petersen.bootcampasj.proyectospringprueba.customExceptions.ValidationException;
-import com.petersen.bootcampasj.proyectospringprueba.model.domino.Cliente;
+
+import com.petersen.bootcampasj.proyectospringprueba.exceptions.HttpClientErrorExceptionWithData;
 import com.petersen.bootcampasj.proyectospringprueba.model.domino.Usuario;
 import com.petersen.bootcampasj.proyectospringprueba.model.repository.UsuarioJPARepository;
-import com.petersen.bootcampasj.proyectospringprueba.service.clasesAuxiliares.EntidadesHijasCliente;
 import com.petersen.bootcampasj.proyectospringprueba.service.interfaces.SessionServiceInterface;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
 @ConditionalOnProperty(prefix = "app", name = "repository-type", havingValue = "mysql")
 public class SessionService implements SessionServiceInterface {
     private final UsuarioJPARepository repositoryUsuario;
-    private final UsuarioMapper mapperUsuario;
 
     /** Constructor con DI **/
     public SessionService(
-            UsuarioJPARepository repository,
-            UsuarioMapper mapperUsuario) {
+            UsuarioJPARepository repository) {
         this.repositoryUsuario = repository;
-        this.mapperUsuario = mapperUsuario;
+
     }
 
 
@@ -34,30 +26,27 @@ public class SessionService implements SessionServiceInterface {
     /** Métodos **/
 
     @Override
-    public ResponseEntity login(Usuario credenciales) {
+    public Usuario login(Usuario credenciales) throws HttpClientErrorExceptionWithData {
 
         if(credenciales.getUsername() == null || credenciales.getPassword() == null) {
-            HttpErrorResponseBody errorBody = new HttpErrorResponseBody("Credenciales incompletas", null);
-            return new ResponseEntity(errorBody, HttpStatus.BAD_REQUEST);
+            throw new HttpClientErrorExceptionWithData("Credenciales incompletas", HttpStatus.BAD_REQUEST, "Bad request", null);
         }
 
         Usuario usuario = repositoryUsuario.findByUsername(credenciales.getUsername())
                                 .orElse(null);
         if(usuario == null || !usuario.getPassword().equals(credenciales.getPassword())) {
-            HttpErrorResponseBody errorBody = new HttpErrorResponseBody("Credenciales incorrectas", null);
-            return new ResponseEntity(errorBody, HttpStatus.UNAUTHORIZED);
+            throw new HttpClientErrorExceptionWithData("Credenciales incorrectas", HttpStatus.UNAUTHORIZED, "Unauthorized", null);
         }
         else {
-            UsuarioResponseDTO usuarioDTO = mapperUsuario.entityToDto(usuario);
-            return new ResponseEntity(usuarioDTO, HttpStatus.OK);
+
+            return usuario;
         }
 
     }
 
-
-
     @Override
-    public ResponseEntity logout(Usuario credenciales) {
-        return null;
+    public boolean logout() {
+        // iria logica para eliminar la sessión
+        return true;
     }
 }

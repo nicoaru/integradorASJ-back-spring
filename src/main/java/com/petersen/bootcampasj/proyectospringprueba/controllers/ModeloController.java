@@ -1,15 +1,21 @@
 package com.petersen.bootcampasj.proyectospringprueba.controllers;
 
-import com.petersen.bootcampasj.proyectospringprueba.HttpErrorResponseBody;
+import com.petersen.bootcampasj.proyectospringprueba.exceptions.HttpClientErrorExceptionWithData;
 import com.petersen.bootcampasj.proyectospringprueba.model.domino.Modelo;
+import com.petersen.bootcampasj.proyectospringprueba.otros.HttpErrorResponseBody;
 import com.petersen.bootcampasj.proyectospringprueba.service.interfaces.ModeloServiceInterface;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/modelos")
+@Api(value = "controller modelos", tags = "Modelos")
 public class ModeloController {
     private final ModeloServiceInterface serviceModelo;
 
@@ -23,41 +29,52 @@ public class ModeloController {
     /** Endpoints **/
 
     @GetMapping
+    @ApiOperation(value = "Traer todos los Modelos")
     public ResponseEntity getAll(){
+        try {
+            List<Modelo> modelos = serviceModelo.getAll();
+            return new ResponseEntity<List<Modelo>>(modelos, HttpStatus.OK);
+        }
+        catch (HttpClientErrorExceptionWithData err) {
+            System.out.println(err.getMessage());
+            err.printStackTrace();
 
-        return serviceModelo.getAll();
+            HttpErrorResponseBody errorBody = new HttpErrorResponseBody(err.getMessage(), err.getData());
+            return new ResponseEntity<HttpErrorResponseBody>(errorBody, err.getStatusCode());
+        }
+        catch (Exception err) {
+            System.out.println(err.getMessage());
+            err.printStackTrace();
+
+            HttpErrorResponseBody errorBody = new HttpErrorResponseBody(err.getMessage(), null);
+            return new ResponseEntity<HttpErrorResponseBody>(errorBody, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     @GetMapping("/{id}")
+    @ApiOperation(value = "Buscar por id")
     public ResponseEntity getById(@PathVariable Integer id){
         System.out.println("Entró en /modelos/{id} - getById");
+        try {
+            Modelo modelo = serviceModelo.getById(id);
+            return new ResponseEntity<Modelo>(modelo, HttpStatus.OK);
+        }
+        catch (HttpClientErrorExceptionWithData err) {
+            System.out.println(err.getMessage());
+            err.printStackTrace();
 
-        return serviceModelo.getById(id);
-    }
+            HttpErrorResponseBody errorBody = new HttpErrorResponseBody(err.getMessage(), err.getData());
+            return new ResponseEntity<HttpErrorResponseBody>(errorBody, err.getStatusCode());
+        }
+        catch (Exception err) {
+            System.out.println(err.getMessage());
+            err.printStackTrace();
 
-    @PostMapping
-    public ResponseEntity create(@RequestBody Modelo newModelo){
-
-        return serviceModelo.create(newModelo);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity deleteById(@PathVariable Integer id){
-
-        return serviceModelo.deleteById(id);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity updateById(@PathVariable Integer id, @RequestBody Modelo updatedModelo){
-        System.out.println("Entró en PUT /usuarios/{id} - updateById");
-
-        if(updatedModelo.getNombre() == null) {
-            HttpErrorResponseBody errorBody = new HttpErrorResponseBody("El nombre no puede ser nulo", null);
-            return new ResponseEntity(errorBody, HttpStatus.BAD_REQUEST);
+            HttpErrorResponseBody errorBody = new HttpErrorResponseBody(err.getMessage(), null);
+            return new ResponseEntity<HttpErrorResponseBody>(errorBody, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        else return serviceModelo.updateById(id, updatedModelo);
     }
-
 
 }

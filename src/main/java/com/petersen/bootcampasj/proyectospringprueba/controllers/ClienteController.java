@@ -4,10 +4,12 @@ import com.petersen.bootcampasj.proyectospringprueba.DTO.clientes.ClienteDTOcrea
 import com.petersen.bootcampasj.proyectospringprueba.DTO.clientes.ClienteDTOupdt;
 import com.petersen.bootcampasj.proyectospringprueba.DTO.clientes.ClienteListDTO;
 import com.petersen.bootcampasj.proyectospringprueba.DTO.mappers.ClienteMapper;
-import com.petersen.bootcampasj.proyectospringprueba.HttpErrorResponseBody;
-import com.petersen.bootcampasj.proyectospringprueba.customExceptions.HttpClientErrorExceptionWithData;
+import com.petersen.bootcampasj.proyectospringprueba.otros.HttpErrorResponseBody;
+import com.petersen.bootcampasj.proyectospringprueba.exceptions.HttpClientErrorExceptionWithData;
 import com.petersen.bootcampasj.proyectospringprueba.model.domino.Cliente;
 import com.petersen.bootcampasj.proyectospringprueba.service.interfaces.ClienteServiceInterface;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,14 +19,16 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/clientes")
+@Api(value = "controller clientes", tags = "Clientes")
 public class ClienteController {
     private final ClienteServiceInterface serviceCliente;
     private final ClienteMapper mapperCliente;
 
     /** Constructor con DI **/
     ClienteController(
-            ClienteServiceInterface serviceCliente,
-            ClienteMapper mapperCliente) {
+            ClienteMapper mapperCliente,
+            ClienteServiceInterface serviceCliente
+            ) {
         this.serviceCliente = serviceCliente;
         this.mapperCliente = mapperCliente;
     }
@@ -34,6 +38,7 @@ public class ClienteController {
     /** Endpoints **/
 
     @GetMapping
+    @ApiOperation(value = "Traer todos los Clientes")
     public ResponseEntity getAll(){
         try{
             List<Cliente> muebles = serviceCliente.getAll();
@@ -55,7 +60,9 @@ public class ClienteController {
         }
     }
 
+
     @GetMapping("/list")
+    @ApiOperation(value = "Traer todos los Cliente con mínima info")
     public ResponseEntity getList(){
         try{
             List<Cliente> muebles = serviceCliente.getAll();
@@ -79,6 +86,7 @@ public class ClienteController {
     }
 
     @GetMapping("/{id}")
+    @ApiOperation(value = "Buscar por id")
     public ResponseEntity getById(@PathVariable Integer id){
         System.out.println("Entró en /clientes/{id} - getById");
         try {
@@ -105,6 +113,7 @@ public class ClienteController {
     }
 
     @PostMapping
+    @ApiOperation(value = "Crear nuevo Cliente")
     public ResponseEntity create(@RequestBody ClienteDTOcreate newCliente){
         System.out.println("Entró en CREATE /clientes/{id} - updateById");
         try{
@@ -130,6 +139,7 @@ public class ClienteController {
     }
 
     @PutMapping("/{id}")
+    @ApiOperation(value = "Actualizar datos de un Cliente por id")
     public ResponseEntity updateById(@PathVariable Integer id, @RequestBody ClienteDTOupdt updateCliente){
         System.out.println("Entró en PUT /muebles/{id} - updateById");
         try{
@@ -156,6 +166,7 @@ public class ClienteController {
     }
 
     @DeleteMapping("/{id}")
+    @ApiOperation(value = "Eliminar un Cliente por id")
     public ResponseEntity deleteById(@PathVariable Integer id){
         try{
             Cliente clienteEliminado = serviceCliente.deleteById(id);

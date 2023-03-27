@@ -1,8 +1,8 @@
 package com.petersen.bootcampasj.proyectospringprueba.service;
 
 import com.petersen.bootcampasj.proyectospringprueba.DTO.mappers.MuebleMapper;
-import com.petersen.bootcampasj.proyectospringprueba.customExceptions.HttpClientErrorExceptionWithData;
-import com.petersen.bootcampasj.proyectospringprueba.customExceptions.ValidationException;
+import com.petersen.bootcampasj.proyectospringprueba.exceptions.HttpClientErrorExceptionWithData;
+import com.petersen.bootcampasj.proyectospringprueba.exceptions.ValidationException;
 import com.petersen.bootcampasj.proyectospringprueba.model.domino.*;
 import com.petersen.bootcampasj.proyectospringprueba.model.repository.*;
 import com.petersen.bootcampasj.proyectospringprueba.service.clasesAuxiliares.EntidadesHijasMueble;
